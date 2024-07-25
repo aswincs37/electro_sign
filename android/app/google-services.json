@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "44570150142",
+    "project_id": "electrosign-877ff",
+    "storage_bucket": "electrosign-877ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44570150142:android:5bd0a94817c1bacd0d11af",
+        "android_client_info": {
+          "package_name": "com.example.electrosign"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY7oej9NMVIrrdszZ-Mx0oZZtMxry-wAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
