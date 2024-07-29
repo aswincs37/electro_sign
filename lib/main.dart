@@ -10,7 +10,7 @@ void main() async {
   //load enviorment variables
   await dotenv.load(fileName: ".env");
   // Initialize Firebase
-  // Initialize Firebase
+  
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: dotenv.env['API_KEY']!,
