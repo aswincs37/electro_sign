@@ -15,8 +15,11 @@ class ContractSign extends StatefulWidget {
   final String documentUrl;
   final String docName;
 
-  const ContractSign(
-      {required this.documentUrl, required this.docName, super.key});
+  const ContractSign({
+    required this.documentUrl,
+    required this.docName,
+    super.key,
+  });
 
   @override
   State<ContractSign> createState() => _ContractSignState();
@@ -27,10 +30,12 @@ class _ContractSignState extends State<ContractSign> {
   Uint8List? exportedImage;
   String? signatureUrl;
   String? documentUrl;
-
   bool showSignedDocument = false;
   DateTime dateTimeNow = DateTime.now();
   final GlobalKey _globalKey = GlobalKey();
+
+  bool addDateAndSign = false;
+  int selectedPosition = 1; // 1 for left bottom, 2 for right bottom
 
   @override
   void initState() {
@@ -108,8 +113,8 @@ class _ContractSignState extends State<ContractSign> {
 
       // Get the download URL
       final downloadUrl = await storageRef.getDownloadURL();
-      //store to firestore
 
+      // Store to Firestore
       await FirebaseFirestore.instance
           .collection('signedDocument')
           .doc(user.uid)
@@ -120,27 +125,24 @@ class _ContractSignState extends State<ContractSign> {
         SetOptions(merge: true),
       );
 
-      setState(
-        () {
-          isUploading = false;
-        },
-      );
+      setState(() {
+        isUploading = false;
+      });
 
       // Navigate to the my contracts page
       final screenWidth = MediaQuery.of(context).size.width;
-      screenWidth > 1000
-          ? Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ManageContractScreen(),
-              ),
-            )
-          : Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const MobileManageContractScreen(),
-              ),
-            );
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => screenWidth > 1000
+              ? const ManageContractScreen()
+              : const MobileManageContractScreen(),
+        ),
+      );
     } catch (e) {
       print('Error capturing image: $e');
+      setState(() {
+        isUploading = false;
+      });
     }
   }
 
@@ -175,19 +177,62 @@ class _ContractSignState extends State<ContractSign> {
           child: Column(
             children: [
               if (!showSignedDocument)
-                SizedBox(
-                  height: 250,
-                  width: 250,
-                  child: Lottie.network(
-                      "https://lottie.host/47cc2ce6-4fbf-43ea-b68a-2491ff00b00b/8DA1yD5Hev.json"),
-                ),
-              if (!showSignedDocument)
                 Column(
                   children: [
+                    SizedBox(
+                      height: 250,
+                      width: 250,
+                      child: Lottie.network(
+                        "https://lottie.host/47cc2ce6-4fbf-43ea-b68a-2491ff00b00b/8DA1yD5Hev.json",
+                      ),
+                    ),
                     Text(
-                      "Click on button for ElectroSign\n to the selected document.!",
+                      "Click on the button for ElectroSign\n to the selected document!",
                       style: GoogleFonts.rubikMarkerHatch(
-                          fontSize: 25, color: Colors.blue[900]),
+                        fontSize: 25,
+                        color: Colors.blue[900],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Add date and sign"),
+                        Checkbox(
+                          value: addDateAndSign,
+                          onChanged: (value) {
+                            setState(() {
+                              addDateAndSign = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Sign on left bottom"),
+                        Radio(
+                          value: 1,
+                          groupValue: selectedPosition,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPosition = value as int;
+                            });
+                          },
+                        ),
+                        const Text("Sign on right bottom"),
+                        Radio(
+                          value: 2,
+                          groupValue: selectedPosition,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPosition = value as int;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -195,8 +240,9 @@ class _ContractSignState extends State<ContractSign> {
                       width: 300,
                       child: ElevatedButton(
                         style: const ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.amber)),
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.amber),
+                        ),
                         onPressed: () {
                           setState(() {
                             showSignedDocument = true;
@@ -205,12 +251,13 @@ class _ContractSignState extends State<ContractSign> {
                         child: Text(
                           "Generate Signed Document",
                           style: GoogleFonts.langar(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600),
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               if (showSignedDocument)
@@ -221,48 +268,79 @@ class _ContractSignState extends State<ContractSign> {
                         )
                       : RepaintBoundary(
                           key: _globalKey,
-                          child: SizedBox(
-                            child: Stack(
-                              children: [
-                                if (documentUrl != null)
-                                  Image.network(
-                                    documentUrl!,
-                                  ),
-                                if (signatureUrl != null)
-                                  Positioned(
-                                    bottom: 10,
-                                    right: 10,
-                                    child: Container(
-                                      color: Colors.white,
-                                      height: 55,
-                                      width: 200,
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 35,
-                                            width: 200,
-                                            child: Image.network(signatureUrl!),
+                          child: selectedPosition == 1
+                              ? Stack(
+                                  children: [
+                                    if (documentUrl != null)
+                                      Image.network(documentUrl!),
+                                    if (signatureUrl != null)
+                                      Positioned(
+                                        bottom: 10,
+                                        left: 10,
+                                        child: Container(
+                                          color: Colors.white,
+                                          height: 55,
+                                          width: 200,
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 35,
+                                                width: 200,
+                                                child: Image.network(
+                                                    signatureUrl!),
+                                              ),
+                                              if (addDateAndSign)
+                                                Text(
+                                                  "${dateTimeNow.toLocal()}"
+                                                      .split(' ')[0],
+                                                  style: const TextStyle(
+                                                      color: Colors.black),
+                                                ),
+                                            ],
                                           ),
-                                          Text(
-                                            "${dateTimeNow.toLocal()}"
-                                                .split(' ')[0],
-                                            style: const TextStyle(
-                                                color: Colors.black),
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
+                                  ],
+                                )
+                              : Stack(
+                                  children: [
+                                    if (documentUrl != null)
+                                      Image.network(documentUrl!),
+                                    if (signatureUrl != null)
+                                      Positioned(
+                                        bottom: 10,
+                                        right: 10,
+                                        child: Container(
+                                          color: Colors.white,
+                                          height: 55,
+                                          width: 200,
+                                          child: Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 35,
+                                                width: 200,
+                                                child: Image.network(
+                                                    signatureUrl!),
+                                              ),
+                                              if (addDateAndSign)
+                                                Text(
+                                                  "${dateTimeNow.toLocal()}"
+                                                      .split(' ')[0],
+                                                  style: const TextStyle(
+                                                      color: Colors.black),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                )),
                 ),
               if (showSignedDocument)
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: isUploading
-                      ? CircularProgressIndicator(
+                      ? const CircularProgressIndicator(
                           strokeAlign: 1.5,
                           strokeWidth: 50,
                           color: Colors.red,
@@ -276,34 +354,32 @@ class _ContractSignState extends State<ContractSign> {
                               height: 40,
                               child: ElevatedButton(
                                 style: ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll(
-                                        Colors.green[900])),
-                                onPressed: () {
-                                  captureAndNavigate();
-                                },
+                                  backgroundColor: MaterialStatePropertyAll(
+                                      Colors.green[900]),
+                                ),
+                                onPressed: captureAndNavigate,
                                 child: const Text(
                                   "Save File",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              width: 15,
-                            ),
+                            const SizedBox(width: 15),
                             SizedBox(
                               width: 150,
                               height: 40,
                               child: ElevatedButton(
                                 style: ButtonStyle(
-                                  backgroundColor: MaterialStatePropertyAll(
-                                    Colors.red[600],
-                                  ),
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(Colors.red[900]),
                                 ),
                                 onPressed: () {
-                                  downloadDocument(documentUrl!);
+                                  setState(() {
+                                    showSignedDocument = false;
+                                  });
                                 },
                                 child: const Text(
-                                  "Download File",
+                                  "Cancel",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
