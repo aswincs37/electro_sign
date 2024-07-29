@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:electrosign/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +6,28 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CommonAppBar({super.key});
-  Future logOut(BuildContext ctx) async {
+
+  Future<String?> gettingUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .get();
+
+    if (doc.exists) {
+      return doc.data()?['name'];
+    } else {
+      debugPrint('No user document found.');
+      return null;
+    }
+  }
+
+  Future<void> logOut(BuildContext ctx) async {
     try {
       await FirebaseAuth.instance.signOut();
       Navigator.of(ctx).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => HomeScreen(),
+          builder: (context) => const HomeScreen(),
         ),
         (route) => false,
       );
@@ -29,24 +46,24 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
-    String userName = user?.email ?? 'User';
+    final screenWidth = MediaQuery.of(context).size.width;
     return AppBar(
+      
+      iconTheme: const IconThemeData(color: Colors.white),
       backgroundColor: const Color.fromARGB(255, 1, 39, 70),
       elevation: 50,
       title: Row(
         children: [
-          Container(
-            height: 50,
+        screenWidth>1000?  Container(
+            height: 50,   
             width: 50,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/images/logo.png"),
               ),
             ),
-          ),
-          const SizedBox(
-              width: 10), // Add some space between the logo and the text
+          ):const SizedBox(),
+          const SizedBox(width: 10),
           Text(
             "ElectroSign",
             style: GoogleFonts.concertOne(
@@ -56,14 +73,32 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-          const SizedBox(
-            width: 60,
-          ),
-          Text(
-            "Hello, $userName",
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold),
-          )
+          const SizedBox(width: 60),
+          screenWidth > 1000
+              ? FutureBuilder<String?>(
+                  future: gettingUserName(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Text(
+                        "Error",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      );
+                    } else {
+                      final userName = snapshot.data;
+                      return Text(
+                        "Hello, $userName !",
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      );
+                    }
+                  },
+                )
+              : const SizedBox()
         ],
       ),
       actions: [
@@ -83,7 +118,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           onPressed: () async {
-            logOut(context);
+            await logOut(context);
           },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(

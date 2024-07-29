@@ -1,4 +1,4 @@
-import 'package:electrosign/screens/home_screen.dart';
+import 'package:electrosign/screens/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,7 +8,7 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "AIzaSyCnhF97eTnmiVgFkWzBd9t64qc6yypEwp0",
+      apiKey: "",
       authDomain: "electrosign-877ff.firebaseapp.com",
       projectId: "electrosign-877ff",
       storageBucket: "electrosign-877ff.appspot.com",
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: GoogleFonts.habibiTextTheme(),
       ),
-      home: HomeScreen(),
+      home: MainScreen(),
     );
   }
 }

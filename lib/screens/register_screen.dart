@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:electrosign/screens/upload_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:electrosign/firebase/login_registration_auth.dart';
+import 'package:electrosign/screens/login_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -14,53 +14,9 @@ class RegisterScreen extends StatelessWidget {
 
   RegisterScreen({super.key});
 
-  Future<void> signUp(BuildContext context) async {
-    try {
-      // Create user
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: emailController.text.trim(),
-              password: passwordController.text.trim());
-
-      // Add user details
-      await addUserDetails(nameController.text.trim(),
-          phoneController.text.trim(), userCredential.user?.uid);
-
-      // Show success message and navigate to another screen if needed
-      showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text("Successfully registered!"),
-          );
-        },
-      );
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>const UploadScreen(),), (route) => false);
-
-      
-     
-    } on FirebaseAuthException catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: const Text("Registration failed"),
-              content: Text(e.message ?? ''));
-        },
-      );
-    }
-  }
-
-  Future<void> addUserDetails(
-      String name, String phoneNumber, String? uid) async {
-    await FirebaseFirestore.instance.collection('users').doc(uid).set({
-      'name': name,
-      'phone': phoneNumber,
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
@@ -159,49 +115,56 @@ class RegisterScreen extends StatelessWidget {
                                 obscureText: true,
                               ),
                               const SizedBox(height: 20.0),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      if (_formKey.currentState?.validate() ?? false) {
-                                        signUp(context);
-                                      }
-                                    },
+                              InkWell(
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    signUp(
+                                        emailController,
+                                        passwordController,
+                                        phoneController,
+                                        nameController,
+                                        context);
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: Ink(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 70.0, vertical: 18.0),
+                                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16.0),
-                                    child: Ink(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 70.0, vertical: 18.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16.0),
-                                        color: Colors.blue,
-                                      ),
-                                      child: const Text(
-                                        'Sign Up',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                        ),
-                                      ),
+                                    color: Colors.blue,
+                                  ),
+                                  child: const Text(
+                                    'Sign Up',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                      fontSize: 16.0,
                                     ),
                                   ),
-                                  TextButton.icon(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.app_registration_rounded,
-                                      color: Colors.blueGrey,
-                                      size: 30,
-                                    ),
-                                    label: const Text(
-                                      "Have an account? Sign In",
-                                      style: TextStyle(
-                                        color: Colors.blueGrey,
-                                        fontSize: 16,
-                                      ),
-                                    ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              TextButton.icon(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => LoginScreen(),
+                                  ));
+                                },
+                                icon: const Icon(
+                                  Icons.app_registration_rounded,
+                                  color: Colors.blueGrey,
+                                  size: 30,
+                                ),
+                                label: const Text(
+                                  "Have an account? Sign In",
+                                  style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: 16,
                                   ),
-                                ],
+                                ),
                               ),
                               const SizedBox(height: 8),
                             ],
@@ -209,13 +172,15 @@ class RegisterScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: SizedBox(
-                        height: 300, // Adjust the height as needed
-                        child: Lottie.network(
-                            "https://lottie.host/ed34bce1-d667-411f-8cd3-735ecc736048/35vQGQB1tY.json"),
-                      ),
-                    ),
+                    screenWidth > 1000
+                        ? Expanded(
+                            child: SizedBox(
+                              height: 300, // Adjust the height as needed
+                              child: Lottie.network(
+                                  "https://lottie.host/ed34bce1-d667-411f-8cd3-735ecc736048/35vQGQB1tY.json"),
+                            ),
+                          )
+                        : SizedBox(),
                   ],
                 ),
               ],

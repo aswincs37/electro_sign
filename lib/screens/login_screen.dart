@@ -1,5 +1,5 @@
-import 'package:electrosign/screens/main_home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:electrosign/firebase/login_registration_auth.dart';
+import 'package:electrosign/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -8,40 +8,13 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _obscurePassword = true;
-
-  Future<void> signIn(BuildContext context) async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text.trim(),
-              password: passwordController.text.trim());
-
-      // Show success message and navigate to MainHomeScreen
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => MainHomeScreen(),
-        ),
-        (route) => false,
-      );
-    } on FirebaseAuthException catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Login failed"),
-            content: Text(e.message ?? ''),
-          );
-        },
-      );
-    }
-  }
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -51,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
@@ -67,6 +41,17 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.close, color: Colors.grey.shade600),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20.0),
                   RichText(
                     text: TextSpan(
@@ -132,7 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       InkWell(
                         onTap: () {
                           if (_formKey.currentState?.validate() ?? false) {
-                            signIn(context);
+                            signIn(
+                                emailController, passwordController, context);
                           }
                         },
                         borderRadius: BorderRadius.circular(16.0),
@@ -153,23 +139,27 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      TextButton.icon(
-                        onPressed: () {
-                          // Handle sign up navigation
-                        },
-                        icon: const Icon(
-                          Icons.app_registration_rounded,
-                          color: Colors.blueGrey,
-                          size: 30,
-                        ),
-                        label: const Text(
-                          "Sign up for free?",
-                          style: TextStyle(
-                            color: Colors.blueGrey,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
+                      screenWidth > 1000
+                          ? TextButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => RegisterScreen(),
+                                ));
+                              },
+                              icon: const Icon(
+                                Icons.app_registration_rounded,
+                                color: Colors.blueGrey,
+                                size: 20,
+                              ),
+                              label: const Text(
+                                "Sign Up for free?",
+                                style: TextStyle(
+                                  color: Colors.blueGrey,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          : SizedBox(),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -189,6 +179,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
+                  screenWidth < 1000
+                      ? TextButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => RegisterScreen(),
+                            ));
+                          },
+                          icon: const Icon(
+                            Icons.app_registration_rounded,
+                            color: Colors.blueGrey,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            "Sign Up for free?",
+                            style: TextStyle(
+                              color: Colors.blueGrey,
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
                   const SizedBox(height: 50.0),
                 ],
               ),

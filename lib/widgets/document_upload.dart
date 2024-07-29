@@ -76,7 +76,7 @@ class _SelectAndUploadDocumentState extends State<SelectAndUploadDocument> {
             .set({'documentUrl': urlDownload}, SetOptions(merge: true));
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               backgroundColor: Colors.green,
               content: Text(
                 'File uploaded successfully!',
@@ -94,13 +94,13 @@ class _SelectAndUploadDocumentState extends State<SelectAndUploadDocument> {
               backgroundColor: Colors.red,
               content: Text(
                 'Failed to upload file: $e',
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               )),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No file selected or document name is empty')),
+        const SnackBar(content: Text('No file selected or document name is empty')),
       );
     }
   }
@@ -108,7 +108,7 @@ class _SelectAndUploadDocumentState extends State<SelectAndUploadDocument> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Select and Upload Document'),
+      title: const Text('Select and Upload Document'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -125,7 +125,7 @@ class _SelectAndUploadDocumentState extends State<SelectAndUploadDocument> {
                   backgroundImage: FileImage(File(result!.files.single.path!)),
                 )
               else
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 100,
                   child: Icon(
                     Icons.upload_file,
@@ -135,7 +135,7 @@ class _SelectAndUploadDocumentState extends State<SelectAndUploadDocument> {
             if (result != null)
               TextFormField(
                 controller: documentNameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Enter document name",
                 ),
               ),
@@ -144,8 +144,8 @@ class _SelectAndUploadDocumentState extends State<SelectAndUploadDocument> {
               ElevatedButton(
                 onPressed: documentPicker,
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -156,14 +156,14 @@ class _SelectAndUploadDocumentState extends State<SelectAndUploadDocument> {
             ElevatedButton(
               onPressed: isUploading ? null : uploadFile,
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: const TextStyle(fontSize: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
               child: isUploading
-                  ? CircularProgressIndicator(
+                  ? const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     )
                   : const Text("Upload Document"),

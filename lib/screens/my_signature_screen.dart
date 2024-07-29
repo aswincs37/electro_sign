@@ -1,8 +1,5 @@
-//  decoration: BoxDecoration(
-//                                       borderRadius: BorderRadius.circular(15),
-//                                       border: Border.all(color: Colors.black)),
-
 import 'package:electrosign/widgets/body_button.dart';
+import 'package:electrosign/widgets/commonAppbar.dart';
 import 'package:electrosign/widgets/side_navbar.dart';
 import 'package:electrosign/widgets/signature_pad.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +22,7 @@ class _MySignatureScreenState extends State<MySignatureScreen> {
     _loadSignature();
   }
 
+  // Load the user's signature URL from Firestore
   Future<void> _loadSignature() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -36,7 +34,7 @@ class _MySignatureScreenState extends State<MySignatureScreen> {
       if (doc.exists) {
         setState(() {
           signatureUrl = doc.data()?['signatureUrl'];
-          print('Signature URL: $signatureUrl'); // Debugging line
+          //  print('Signature URL: $signatureUrl'); // Debugging line
         });
       } else {
         print('No signature found for this user.');
@@ -49,6 +47,7 @@ class _MySignatureScreenState extends State<MySignatureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CommonAppBar(),
       body: Row(
         children: [
           const SizedBox(
@@ -74,6 +73,7 @@ class _MySignatureScreenState extends State<MySignatureScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // Display the signature if available
                       if (signatureUrl != null)
                         Container(
                           decoration: BoxDecoration(
@@ -84,10 +84,10 @@ class _MySignatureScreenState extends State<MySignatureScreen> {
                           height: 300,
                           child: Image.network(
                             signatureUrl!,
-                            fit: BoxFit.cover,
+                          
                             errorBuilder: (context, error, stackTrace) {
                               print(
-                                  'Error loading image: $error'); // Debugging line
+                                  'Error loading image: $error'); 
                               return const Center(
                                 child: Text(
                                   'Error loading image',
@@ -122,7 +122,7 @@ class _MySignatureScreenState extends State<MySignatureScreen> {
                             buttonfunction: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => MakeSignature(),
+                                  builder: (context) => const MakeSignature(),
                                 ),
                               );
                             },

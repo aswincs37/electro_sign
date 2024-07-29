@@ -1,4 +1,6 @@
+import 'package:electrosign/screens/main_home_screen.dart';
 import 'package:electrosign/screens/manage_contracts_screens.dart';
+import 'package:electrosign/screens/mobile/mobile_upload_screen.dart';
 import 'package:electrosign/screens/my_documents_screen.dart';
 import 'package:electrosign/screens/my_signature_screen.dart';
 import 'package:electrosign/screens/upload_screen.dart';
@@ -9,6 +11,7 @@ class SideNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     Color whiteClr = Colors.white;
     return Container(
       width: 200,
@@ -25,8 +28,11 @@ class SideNavBar extends StatelessWidget {
               style: TextStyle(color: whiteClr),
             ),
             onTap: () {
-              // Add your onTap code here!
-              Navigator.pop(context);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const MainHomeScreen(),
+                  ),
+                  (route) => false);
             },
           ),
           ListTile(
@@ -39,10 +45,17 @@ class SideNavBar extends StatelessWidget {
               style: TextStyle(color: whiteClr),
             ),
             onTap: () {
-              // Add your onTap code here!
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const UploadScreen(),
-              ));
+              screenWidth > 1000
+                  ? Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const UploadScreen(),
+                      ),
+                      (route) => false)
+                  : Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const MobileUploadScreen(),
+                      ),
+                      (route) => false);
             },
           ),
           ListTile(
@@ -55,10 +68,11 @@ class SideNavBar extends StatelessWidget {
               style: TextStyle(color: whiteClr),
             ),
             onTap: () {
-              // Add your onTap code here!
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const ManageContractScreen(),
-              ));
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const ManageContractScreen(),
+                  ),
+                  (route) => false);
             },
           ),
           ListTile(
@@ -71,10 +85,11 @@ class SideNavBar extends StatelessWidget {
               style: TextStyle(color: whiteClr),
             ),
             onTap: () {
-              // Add your onTap code here!
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const MySignatureScreen(),
-              ));
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const MySignatureScreen(),
+                  ),
+                  (route) => false);
             },
           ),
           ListTile(
@@ -87,10 +102,11 @@ class SideNavBar extends StatelessWidget {
               style: TextStyle(color: whiteClr),
             ),
             onTap: () {
-              // Add your onTap code here!
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const MyDocumentScreen(),
-              ));
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const MyDocumentScreen(),
+                  ),
+                  (route) => false);
             },
           ),
         ],

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:electrosign/screens/login_screen.dart';
 import 'package:electrosign/screens/register_screen.dart';
 import 'package:electrosign/section/body/footer_body.dart';
@@ -8,23 +10,22 @@ import 'package:electrosign/widgets/floatingactionbutton.dart';
 import 'package:electrosign/widgets/header_buttons.dart';
 import 'package:electrosign/widgets/header_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class MobileHomeScreen extends StatelessWidget {
+  const MobileHomeScreen({super.key});
   Future logOut(BuildContext ctx) async {
     try {
       await FirebaseAuth.instance.signOut();
-      // ignore: use_build_context_synchronously
       Navigator.of(ctx).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => const MobileHomeScreen(),
         ),
         (route) => false,
       );
     } catch (e) {
-      // ignore: use_build_context_synchronously
       showDialog(
         context: ctx,
         builder: (context) {
@@ -47,7 +48,7 @@ class HomeScreen extends StatelessWidget {
           SliverAppBar(
               pinned: true,
               backgroundColor: const Color.fromARGB(255, 1, 39, 70),
-              elevation: 50,
+              // elevation: 50,
               leading: Builder(
                 builder: (context) => IconButton(
                   icon: const Icon(Icons.menu, color: Colors.white),
@@ -56,19 +57,19 @@ class HomeScreen extends StatelessWidget {
               ),
               title: Row(
                 children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/logo.png"))),
-                  ),
+                  // Container(
+                  //   height: 50,
+                  //   width: 50,
+                  //   decoration: const BoxDecoration(
+                  //       image: DecorationImage(
+                  //           image: AssetImage("assets/images/logo.png"))),
+                  // ),
                   Text(
                     "ElectroSign",
                     style: GoogleFonts.concertOne(
                       textStyle: const TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -130,28 +131,30 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 50,
                   )
                 ],
               ]),
           const SliverToBoxAdapter(
-            child: Column(
-              children: [
-                Header_body(),
-                SizedBox(
-                  height: 20,
-                ),
-                FirstMiddleBody(),
-                SizedBox(
-                  height: 20,
-                ),
-                SecondMiddleBody(),
-                SizedBox(
-                  height: 10,
-                ),
-                FooterBody()
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Header_body(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  FirstMiddleBody(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SecondMiddleBody(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  FooterBody()
+                ],
+              ),
             ),
           ),
         ],

@@ -1,17 +1,26 @@
+import 'package:electrosign/screens/home_screen.dart';
+import 'package:electrosign/screens/main_home_screen.dart';
 import 'package:electrosign/screens/manage_contracts_screens.dart';
+import 'package:electrosign/screens/mobile/mobile_manage_contracts_screens.dart';
+import 'package:electrosign/screens/mobile/mobile_upload_screen.dart';
+import 'package:electrosign/screens/mobile/my_documents_screen.dart';
+import 'package:electrosign/screens/mobile/my_signature_screen.dart';
 import 'package:electrosign/screens/my_documents_screen.dart';
 import 'package:electrosign/screens/my_signature_screen.dart';
 import 'package:electrosign/screens/upload_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:electrosign/screens/login_screen.dart'; 
+import 'package:electrosign/screens/login_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HeaderDrawer extends StatelessWidget {
   const HeaderDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     User? user = FirebaseAuth.instance.currentUser;
+    String userName = user?.email ?? 'User';
 
     Color whiteClr = Colors.white;
 
@@ -21,28 +30,39 @@ class HeaderDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           if (user != null) ...[
-            const DrawerHeader(
-              decoration: BoxDecoration(
+            DrawerHeader(
+              decoration: const BoxDecoration(
                 color: Colors.blue,
               ),
               child: Column(
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 50,
-                        child: Icon(Icons.person),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            child: Icon(Icons.person),
+                          ),
+                          Text(
+                            'Hi, ${userName}!',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                          Text(
+                            "Explore our App...!",
+                            style: GoogleFonts.acme(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          )
+                        ],
                       ),
                       SizedBox(
                         width: 10,
-                      ),
-                      Text(
-                        "Hi,User!",
-                        // 'Hi, ${user.displayName ?? 'User'}!',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                        ),
                       ),
                     ],
                   ),
@@ -59,7 +79,11 @@ class HeaderDrawer extends StatelessWidget {
                 style: TextStyle(color: whiteClr),
               ),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const MainHomeScreen(),
+                    ),
+                    (route) => false);
               },
             ),
             ListTile(
@@ -72,9 +96,17 @@ class HeaderDrawer extends StatelessWidget {
                 style: TextStyle(color: whiteClr),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const UploadScreen(),
-                ));
+                screenWidth > 1000
+                    ? Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const UploadScreen(),
+                        ),
+                        (route) => false)
+                    : Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const MobileUploadScreen(),
+                        ),
+                        (route) => false);
               },
             ),
             ListTile(
@@ -87,9 +119,18 @@ class HeaderDrawer extends StatelessWidget {
                 style: TextStyle(color: whiteClr),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ManageContractScreen(),
-                ));
+                screenWidth > 1000
+                    ? Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const ManageContractScreen(),
+                        ),
+                        (route) => false)
+                    : Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MobileManageContractScreen(),
+                        ),
+                        (route) => false);
               },
             ),
             ListTile(
@@ -102,9 +143,17 @@ class HeaderDrawer extends StatelessWidget {
                 style: TextStyle(color: whiteClr),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const MySignatureScreen(),
-                ));
+                screenWidth > 1000
+                    ? Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const MySignatureScreen(),
+                        ),
+                        (route) => false)
+                    : Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const MobileMySignatureScreen(),
+                        ),
+                        (route) => false);
               },
             ),
             ListTile(
@@ -117,9 +166,17 @@ class HeaderDrawer extends StatelessWidget {
                 style: TextStyle(color: whiteClr),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const MyDocumentScreen(),
-                ));
+                screenWidth > 1000
+                    ? Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const MyDocumentScreen(),
+                        ),
+                        (route) => false)
+                    : Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const MobileMyDocumentScreen(),
+                        ),
+                        (route) => false);
               },
             ),
             ListTile(
@@ -134,12 +191,12 @@ class HeaderDrawer extends StatelessWidget {
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
                   (route) => false,
                 );
               },
             ),
-             ] else ...[
+          ] else ...[
             const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
@@ -167,6 +224,16 @@ class HeaderDrawer extends StatelessWidget {
                 ),
               ),
             ),
+            Container(
+              margin: const EdgeInsets.all(50),
+              height: 150,
+              width: 100,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/logo.png"),
+                ),
+              ),
+            )
           ],
         ],
       ),

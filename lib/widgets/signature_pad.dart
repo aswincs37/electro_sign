@@ -14,6 +14,7 @@ class MakeSignature extends StatefulWidget {
 
 class _MakeSignatureState extends State<MakeSignature> {
   Uint8List? exportedImage;
+  bool isUploading = false;
   SignatureController controller = SignatureController(
     penStrokeWidth: 3,
     penColor: Colors.black,
@@ -23,6 +24,9 @@ class _MakeSignatureState extends State<MakeSignature> {
   Future<void> saveSignature() async {
     if (exportedImage != null) {
       try {
+        setState(() {
+          isUploading = true;
+        });
         final user = FirebaseAuth.instance.currentUser;
         final fileName =
             'signature_${DateTime.now().millisecondsSinceEpoch}.png';
@@ -31,7 +35,9 @@ class _MakeSignatureState extends State<MakeSignature> {
             .child('signatures/${user!.uid}/$fileName');
 
         // Upload the signature image
+
         final uploadTask = storageRef.putData(exportedImage!);
+
         await uploadTask;
 
         // Get the download URL
@@ -42,10 +48,12 @@ class _MakeSignatureState extends State<MakeSignature> {
             .collection('userSignatures')
             .doc(user.uid)
             .set({'signatureUrl': downloadUrl}, SetOptions(merge: true));
-
+        setState(() {
+          isUploading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-             backgroundColor: Colors.green,
+          const SnackBar(
+            backgroundColor: Colors.green,
             content: Text(
               'Signature saved successfully!',
               style: TextStyle(color: Colors.white, fontSize: 16),
@@ -58,7 +66,10 @@ class _MakeSignatureState extends State<MakeSignature> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               backgroundColor: Colors.white,
-              content: Text('Failed to save signature: $e',style: TextStyle(color: Colors.red),)),
+              content: Text(
+                'Failed to save signature: $e',
+                style: const TextStyle(color: Colors.red),
+              )),
         );
       }
     }
@@ -82,7 +93,7 @@ class _MakeSignatureState extends State<MakeSignature> {
               height: 200,
               backgroundColor: Colors.lightBlue[100]!,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -90,49 +101,57 @@ class _MakeSignatureState extends State<MakeSignature> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                    padding: EdgeInsets.all(10),
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          exportedImage = await controller.toPngBytes();
-                          await saveSignature();
-                        },
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white),
-                        ),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.green),
-                            shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: BorderSide(color: Colors.black)))))),
+                    padding: const EdgeInsets.all(10),
+                    child: isUploading
+                        ? const CircularProgressIndicator(
+                            color: Colors.green,
+                          )
+                        : ElevatedButton(
+                            onPressed: () async {
+                              exportedImage = await controller.toPngBytes();
+
+                              await saveSignature();
+                            },
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.green),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                        side: const BorderSide(
+                                            color: Colors.black)))),
+                            child: const Text(
+                              "Save",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white),
+                            ))),
                 Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: ElevatedButton(
                     onPressed: () {
                       controller.clear();
                     },
-                    child: const Text(
-                      "Clear",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white),
-                    ),
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all<Color>(Colors.red),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.black),
+                          side: const BorderSide(color: Colors.black),
                         ),
                       ),
+                    ),
+                    child: const Text(
+                      "Clear",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
                     ),
                   ),
                 ),

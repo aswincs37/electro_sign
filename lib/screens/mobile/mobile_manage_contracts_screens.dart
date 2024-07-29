@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:electrosign/widgets/commonAppbar.dart';
-import 'package:electrosign/widgets/side_navbar.dart';
+import 'package:electrosign/widgets/header_drawer.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ManageContractScreen extends StatefulWidget {
-  const ManageContractScreen({super.key});
+class MobileManageContractScreen extends StatefulWidget {
+  const MobileManageContractScreen({super.key});
 
   @override
-  _ManageContractScreenState createState() => _ManageContractScreenState();
+  State<MobileManageContractScreen> createState() => _MobileManageContractScreenState();
 }
 
-class _ManageContractScreenState extends State<ManageContractScreen> {
-  Future<List<Map<String, String>>> fetchUserDocuments() async {
+class _MobileManageContractScreenState extends State<MobileManageContractScreen> {
+   Future<List<Map<String, String>>> fetchUserDocuments() async {
     final user = FirebaseAuth.instance.currentUser;
     final documentsRef = FirebaseFirestore.instance
         .collection('signedDocument')
@@ -34,44 +35,30 @@ class _ManageContractScreenState extends State<ManageContractScreen> {
   Future<void> downloadDocument(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      await launchUrl(url as Uri);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not open the document'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      throw 'Could not launch $url';
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: HeaderDrawer(),
       appBar: const CommonAppBar(),
-      body: Row(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            width: 200,
-            child: SideNavBar(),
+          const Center(
+            child: Text(
+              "Contracts",
+              style: TextStyle(
+                  color: Colors.deepPurple,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600),
+            ),
           ),
+          const SizedBox(height: 20),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Center(
-                    child: Text(
-                      "Contracts",
-                      style: TextStyle(
-                          color: Colors.deepPurple,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
                     child: FutureBuilder<List<Map<String, String>>>(
                       future: fetchUserDocuments(),
                       builder: (context, snapshot) {
@@ -148,10 +135,6 @@ class _ManageContractScreenState extends State<ManageContractScreen> {
                       },
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );

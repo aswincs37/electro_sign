@@ -1,1 +1,32 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"electrosign-877ff","appId":"1:44570150142:android:5bd0a94817c1bacd0d11af","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"electrosign-877ff","configurations":{"android":"1:44570150142:android:5bd0a94817c1bacd0d11af","ios":"1:44570150142:ios:78e7679aa428b7e10d11af","macos":"1:44570150142:ios:78e7679aa428b7e10d11af","web":"1:44570150142:web:030d8fc66eb04c5b0d11af"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "electrosign-877ff",
+          "appId": "1:44570150142:android:5bd0a94817c1bacd0d11af",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "electrosign-877ff",
+          "configurations": {
+            "android": "1:44570150142:android:5bd0a94817c1bacd0d11af",
+            "ios": "1:44570150142:ios:78e7679aa428b7e10d11af",
+            "macos": "1:44570150142:ios:78e7679aa428b7e10d11af",
+            "web": "1:44570150142:web:030d8fc66eb04c5b0d11af"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

@@ -1,4 +1,7 @@
+import 'package:electrosign/screens/login_screen.dart';
+import 'package:electrosign/screens/upload_screen.dart';
 import 'package:electrosign/widgets/body_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SecondMiddleBody extends StatelessWidget {
@@ -6,6 +9,7 @@ class SecondMiddleBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
     return Container(
       width: double.infinity,
       height: 300,
@@ -36,12 +40,21 @@ class SecondMiddleBody extends StatelessWidget {
             height: 25,
           ),
           BodyButton(
-              label: "Try ElectroSign",
-              btnIcn: Icons.arrow_forward,
-              icnClr: Colors.white,
-              labelClr: Colors.white,
-              btnClr: Colors.purple,
-              buttonfunction: () {})
+            label: "Try ElectroSign",
+            btnIcn: Icons.arrow_forward,
+            icnClr: Colors.white,
+            labelClr: Colors.white,
+            btnClr: Colors.purple,
+            buttonfunction: () {
+              user == null
+                  ? Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ))
+                  : Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const UploadScreen(),
+                    ));
+            },
+          )
         ],
       ),
     );

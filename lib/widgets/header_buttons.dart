@@ -24,7 +24,7 @@ class _StylishTextButtonState extends State<StylishTextButton> {
         style: TextButton.styleFrom(
           foregroundColor: _isHovered ? Colors.red : Colors.white,
           textStyle: const TextStyle(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),

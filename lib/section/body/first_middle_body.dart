@@ -40,24 +40,33 @@ class FirstMiddleBody extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 20,
+            height: 60,
           ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+          SizedBox(
+            height: 200,
+            child: ListView(scrollDirection: Axis.horizontal, children: const [
+              SizedBox(
+                width: 50,
+              ),
               BodyCard(
                   heading: "Become more agile",
                   subtxt:
                       "Business moves fast, and today’s customers expect convenience. \nWe can help you power your digital transformation."),
+              SizedBox(
+                width: 50,
+              ),
               BodyCard(
                   heading: "Save time and money",
                   subtxt:
                       "Get your contracts signed faster to keep \tyour business moving."),
+              SizedBox(
+                width: 20,
+              ),
               BodyCard(
                   heading: "Reduce your environmental impact",
                   subtxt:
-                      "Shift to digital agreement processes to \nsave paper, water and waste")
-            ],
+                      "Shift to digital agreement processes to \nsave paper, water and waste"),
+            ]),
           ),
           const SizedBox(
             height: 20,

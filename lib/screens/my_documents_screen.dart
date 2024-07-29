@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:electrosign/screens/contract_sign.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:electrosign/widgets/commonAppbar.dart';
 import 'package:electrosign/widgets/side_navbar.dart';
@@ -88,7 +88,12 @@ class _MyDocumentScreenState extends State<MyDocumentScreen> {
                               final name = document['name']!;
                               return GestureDetector(
                                 onTap: () {
-                                  // Handle the document tap event
+                                Navigator.of(context).push(
+  MaterialPageRoute(
+    builder: (context) => ContractSign(documentUrl: url,docName: name),
+  ),
+);
+
                                   print('Tapped on document: $name');
                                 },
                                 child: Column(
