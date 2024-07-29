@@ -1,19 +1,24 @@
 import 'package:electrosign/screens/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  //load enviorment variables
+  await dotenv.load(fileName: ".env");
+  // Initialize Firebase
   // Initialize Firebase
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "",
-      authDomain: "electrosign-877ff.firebaseapp.com",
-      projectId: "electrosign-877ff",
-      storageBucket: "electrosign-877ff.appspot.com",
-      messagingSenderId: "44570150142",
-      appId: "1:44570150142:web:030d8fc66eb04c5b0d11af",
+    options: FirebaseOptions(
+      apiKey: dotenv.env['API_KEY']!,
+      authDomain: dotenv.env['AUTH_DOMAIN']!,
+      projectId: dotenv.env['PROJECT_ID']!,
+      storageBucket: dotenv.env['STORAGE_BUCKET']!,
+      messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+      appId: dotenv.env['APP_ID']!,
     ),
   );
   runApp(const MyApp());
