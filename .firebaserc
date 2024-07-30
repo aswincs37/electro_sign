@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "electrosign-877ff"
-  }
+    "default": "electrosign-877ff",
+    "prod": "electrosign-877ff"
+  },
+  "targets": {},
+  "etags": {}
 }
