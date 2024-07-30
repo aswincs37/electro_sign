@@ -35,7 +35,7 @@ class _ContractSignState extends State<ContractSign> {
   final GlobalKey _globalKey = GlobalKey();
 
   bool addDateAndSign = false;
-  int selectedPosition = 1; // 1 for left bottom, 2 for right bottom
+  int selectedPosition = 1; 
 
   @override
   void initState() {
